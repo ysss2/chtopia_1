@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2024 by nh-kim (http://jsbin.com/nahuloh/1/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>체토피아</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color : white;
+        }
+      
+        .container {
+            width: 80%;
+            margin: 0 auto;
+
+        }
+
+
+        nav {
+            display: inline;
+            float: right;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        nav ul li:hover {
+            transform: scale(1.2);
+        }
+
+        nav ul li a {
+            color: black;
+            text-decoration: none;
+            font-size: 16px;
+        }
+.hero {
+    background-image: url('https://i.imgur.com/SArUVUB.jpeg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 250px 0;
+    text-align: center;
+}
+        @keyframes hero-bg {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .hero-text h2 {
+            font-size: 48px;
+            margin: 0 0 20px;
+            opacity: 0;
+            animation: fade-in 1s ease forwards;
+        }
+
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-text p {
+            font-size: 24px;
+            margin: 0 0 20px;
+            opacity: 0;
+            animation: fade-in 1s ease forwards 0.5s;
+        }
+
+        .hero-text button {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: #0058a3;
+            border: none;
+            color: white;
+            cursor: pointer;
+            opacity: 0;
+            animation: fade-in 1s ease forwards 1s;
+            transition: background-color 0.3s ease;
+        }
+
+        .hero-text button:hover {
+            background-color: #004080;
+        }
+
+.content {
+    padding: 50px 0;
+    text-align: center;
+    z-index: 0; /* content 영역의 z-index를 낮춰서 .cards 위로 오게 함 */
+}
+
+        .content h3 {
+            font-size: 15px;
+            color: black;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fade-in 1s ease forwards 1.5s;
+            font-family: serif;
+        }
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    overflow: hidden; /* 이미지가 넘치지 않도록 설정 */
+    position: relative; /* 자식 요소를 상대적으로 배치하기 위해 부모 요소에 position 속성 추가 */
+}
+
+.card {
+    text-align: center;
+    opacity: 0;
+    animation: fade-in 1s ease forwards;
+    animation-delay: calc(var(--card-index) * 0.2s);
+    transition: transform 0.3s ease;
+    position: relative; /* 위치 설정 */
+    perspective: 1800px; /* 3D 효과를 위한 perspective 설정 */
+    overflow: hidden; /* 이미지가 요소의 경계를 벗어나지 않도록 설정 */
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+    transition: transform 0.5s ease;
+    filter: grayscale(100%);
+    max-width: 100%; /* 최대 너비 설정 */
+    max-height: 100%; /* 최대 높이 설정 */
+}
+
+.card:hover img {
+    transform: scale(1.1);
+    filter: grayscale(0%);
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+    mix-blend-mode: lighten;
+    transition: all 0.5s ease;
+    z-index: 2; /* 이미지가 다른 요소들 위에 올라오도록 설정 */
+    border-radius: 15px;
+}
+
+.card:hover::before {
+    transform: scale(1.1);
+}
+
+
+.cards {
+    animation: none; /* 무빙워크 애니메이션 제거 */
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 3; /* 모달 창이 가장 위에 나타나도록 설정 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(255, 255, 255, 0.9); /* 반투명 흰 배경 */
+}
+
+.modal-content {
+    margin: 15% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    background-color: #fefefe; /* 모달 내용 배경색 */
+    border-radius: 15px;
+    position: relative; /* 내용을 중앙 정렬하기 위한 설정 */
+}
+
+.modal img {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    display: block; /* 이미지를 중앙 정렬하기 위한 설정 */
+    margin: 0 auto;
+}
+
+.modal-description {
+    margin-top: 10px;
+    color: #333;
+    font-size: 15px;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #333; /* 닫기 아이콘 색상 변경 */
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #999; /* 마우스 호버 시 색상 변화 */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+        footer {
+            background-color: black;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 12px;
+        }
+      
+    </style>
+  
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var cards = document.querySelectorAll('.card img');
+            var modal = document.getElementById("myModal");
+            var modalImg = document.getElementById("modalImg");
+            var modalDesc = document.getElementById("modalDesc");
+            var closeBtn = document.getElementsByClassName("close")[0];
+
+            cards.forEach(function(card) {
+                card.addEventListener('click', function() {
+                    modal.style.display = "block";
+                    modalImg.src = this.src;
+                    modalDesc.innerHTML = this.alt;
+                });
+            });
+
+            closeBtn.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+    </header>
+    <main>
+              <div class="hero" style="background-image: url('https://i.imgur.com/SArUVUB.jpeg');
+                                       background-size: cover;
+                                       background-position: center;">
+    <div class="hero-text">
+        <p></p>
+    </div>
+</div>
+
+                <h2></h2>
+                <p></p>
+                
+            </div>
+        </div>
+        <div class="content">
+
+            <div class="cards">
+                <div class="card" style="--card-index: 1;">
+                    <img src="https://i.imgur.com/kJeklOQ.jpeg" alt="앉는 순간 어린 시절로 돌아갈 것만 같은 의자. 자신도 모르게 잠에 들지도 모릅니다.">
+                </div>
+                <div class="card" style="--card-index: 2;">
+                    <img src="https://i.imgur.com/5drLost.jpeg" alt="'...앉아도 되나?' 물론! 하지만 어느 순간 팔 하나가 의자의 입 속에 들어가 있을 지도 몰라요.">
+                </div>
+                <div class="card" style="--card-index: 3;">
+                    <img src="https://i.imgur.com/ZvNAXHz.jpeg" alt="이 의자에 앉으면 함께 흘러가 버릴 것만 같습니다. 물 흐르듯.">
+                </div>
+                <div class="card" style="--card-index: 4;">
+                    <img src="https://i.imgur.com/zMF2Ddu.jpeg" alt="특별한 소스를 부어보고 싶은 욕망이 드는 의자. 제대로 익은 것 같습니다.">
+                </div>
+                <div class="card" style="--card-index: 5;">
+                    <img src="https://i.imgur.com/s4ygm40.jpeg" alt="앉고 일어나면 엉덩이에 뭐가 묻어 나올 수도 있어요. 인체에 해가 되진 않습니다!">
+                </div>
+                <div class="card" style="--card-index: 6;">
+                    <img src="https://i.imgur.com/7B54r65.jpeg" alt="말랑한 흙으로 만들어진 의자. 의자에서 떨어진 부스러기들 안에서 새싹이 피어날 수 있습니다.">
+                </div>
+                <div class="card" style="--card-index: 7;">
+                    <img src="https://i.imgur.com/fj2P20r.jpeg" alt="엘사의 성에 존재할 것만 같은 의자. 동상을 입지 않게 조심하세요!">
+                </div>
+                <div class="card" style="--card-index: 8;">
+                    <img src="https://i.imgur.com/BCue0dt.jpeg" alt="꺼지지 않는 불꽃 의자. 발등에 불이 떨어진 것처럼 뜨겁게 타오르고 있습니다. 화상을 입지 않도록 주의하세요.">
+                </div>
+                <div class="card" style="--card-index: 9;">
+                    <img src="https://i.imgur.com/q864cSB.jpeg" alt="초콜릿으로 만든 리클라이너 의자. 달콤하고 편안하지만 녹지 않도록 서늘한 곳에 보관하세요.">
+                </div>
+                <div class="card" style="--card-index: 10;">
+                    <img src="https://i.imgur.com/mSUGbem.png" alt="흰 천과 바람만 있으면 어디든지 갈 수 있는 의자. 의자 근처에서는 늘 순풍이 붑니다.">
+                </div>
+                <div class="card" style="--card-index: 11;">
+                    <img src="https://i.imgur.com/IXnhJHs.jpeg" alt="다양한 꽃으로 이루어진 의자. 늘 향기로운 냄새가 납니다.">
+                </div>
+                <div class="card" style="--card-index: 12;">
+                    <img src="https://i.imgur.com/YmKoQqb.jpeg" alt="달콤한 초코칩 쿠키로 이루어진 의자. 부스러기가 떨어지지 않도록 조심하세요.">
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 체토피아. 모든 권리 보유.</p>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <div class="modal-content">
+            <img id="modalImg" src="" alt="">
+            <div id="modalDesc" class="modal-description"></div>
+        </div>
+    </div>
+<script src="https://static.jsbin.com/js/render/edit.js?4.1.8"></script>
+<script>jsbinShowEdit && jsbinShowEdit({"static":"https://static.jsbin.com","root":"https://jsbin.com"});</script>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-1656750-34', 'auto');
+ga('require', 'linkid', 'linkid.js');
+ga('require', 'displayfeatures');
+ga('send', 'pageview');
+  
+  
+
+</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var cards = document.querySelectorAll('.card img');
+        var modal = document.getElementById("myModal");
+        var modalImg = document.getElementById("modalImg");
+        var modalDesc = document.getElementById("modalDesc");
+        var closeBtn = document.getElementsByClassName("close")[0];
+
+        // 랜덤 색상을 생성하는 함수
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color + '80'; // 반투명도를 위해 RGBA 형식으로 변환
+        }
+
+        cards.forEach(function(card) {
+            card.addEventListener('click', function() {
+                // 랜덤 배경색 설정
+                var randomColor = getRandomColor();
+                modal.style.backgroundColor = randomColor;
+
+                modal.style.display = "block";
+                modalImg.src = this.src;
+                modalDesc.innerHTML = this.alt;
+            });
+        });
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        };
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+    });
+</script>
+
+</body>
+</html>
